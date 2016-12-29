@@ -43,7 +43,7 @@ public class Controller {
     }
 
     public Layer getOutput() throws IOException, ParseException {
-        int noOfHidden = 2;
+        int noOfHidden = 3;
         int noOfNeuronsPerLayer = 3;
         Network network = new Network(noOfFeatures, noOfOuputs, noOfHidden, noOfNeuronsPerLayer, epsilon, noEpoch);
         network.learn(input, output);

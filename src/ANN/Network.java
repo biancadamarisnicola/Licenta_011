@@ -12,7 +12,7 @@ public class Network {
     private Layer layers[];
     private Fraction epsilon;
     private int noEpoch;
-    private Fraction learningRate = new Fraction().valueOf(0.3);
+    private Fraction learningRate = new Fraction().valueOf(0.9);
 
     public Network(int noOfFeatures, int noOfOuputs, int noOfHidden, int noOfNeuronsPerLayer, Fraction epsilon, int noEpoch) {
         noOfInputs = noOfFeatures;
@@ -62,28 +62,34 @@ public class Network {
                 errorsBackpropagation(err);
             }
             Double SEE = computeSEE(globalError);
-            System.out.println(" SEE: "+SEE);
-            stopCondition = checkGlobarErr(globalError);
+            System.out.println(" SEE: "+SEE+" Learning Rate: "+learningRate);
+            stopCondition = checkGlobarErr(SEE);
             epoch++;
         }
     }
 
     private Double computeSEE(Fraction[] globalError) {
         Fraction see = new Fraction();
+//        System.out.print(" "+globalError[0].recalibreaza().recalibreaza().div(new Fraction().valueOf(noOfInputs))
+//                +" "+globalError[1].recalibreaza().recalibreaza().div(new Fraction().valueOf(noOfInputs))
+//                +" "+globalError[2].recalibreaza().recalibreaza().div(new Fraction().valueOf(noOfInputs))+" ");
         for (Fraction err: globalError){
             see = see.add(err.recalibreaza().recalibreaza());
         }
         see = see.div(new Fraction().valueOf(globalError.length));
         double err = Math.sqrt(see.toDouble());
+        adjustLearningRate(err);
         return err;
     }
 
-    private boolean checkGlobarErr(Fraction[] globalError) {
-        Fraction error = new Fraction();
-        for (int i=0; i<globalError.length;i++){
-            error = error.add(globalError[i]);
+    private void adjustLearningRate(Double err) {
+        if(err<400) {
+            learningRate = new Fraction().valueOf(Math.log(420-err)).div(new Fraction().valueOf(Math.exp(1)*1.1));
         }
-        if (error.greaterThan(new Fraction().valueOf(10))){
+    }
+
+    private boolean checkGlobarErr(Double SEE) {
+        if (SEE > 0.225){
             return false;
         }
         return true;
@@ -95,7 +101,7 @@ public class Network {
             int i =0;
             for( Neuron n1: layers[currentLayerNo].getNeurons()){
                 if (currentLayerNo == noOfHiddenLayers+1){
-                    n1.setErr(err[i]);
+                    n1.setErrorSoftPlus(err[i]);
                 }else{
                     Fraction sumError = new Fraction();
                     for(Neuron n2: layers[currentLayerNo+1].getNeurons()){

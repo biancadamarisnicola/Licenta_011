@@ -110,12 +110,6 @@ public class Neuron {
         this.weights[k] = netWeigth;
     }
 
-    public void setErr(Fraction val) {
-        //linear function
-        this.error = val;
-        //sigmoidal function
-        //this.error = this.output*(1-this.output)*val;
-    }
 
     @Override
     public String toString() {

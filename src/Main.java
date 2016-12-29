@@ -7,7 +7,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.text.ParseException;
 
 /**
@@ -35,8 +34,8 @@ public class Main {
 
     public Main() throws Exception {
         initialize();
-        this.noEpoch = 300;
-        this.epsilon = new Fraction(BigInteger.ONE).valueOf(0.001);
+        this.noEpoch = 100;
+        this.epsilon = new Fraction().valueOf(0.001);
         this.ctrl = new Controller(noEpoch, epsilon);
     }
 
