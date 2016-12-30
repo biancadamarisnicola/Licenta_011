@@ -6,20 +6,28 @@ import Utils.Fraction;
  * Created by bianca on 29.12.2016.
  */
 public class Network {
+    private final int limitSEE;
+    private final boolean adaptiveLR;
     private int noOfInputs;
     private int noOfOutput;
     private int noOfHiddenLayers;
     private Layer layers[];
-    private Fraction epsilon;
-    private int noEpoch;
-    private Fraction learningRate = new Fraction().valueOf(0.9);
+    private Double epsilon;
+    private int noEpoch = 100;
+    private Fraction learningRate =new Fraction().valueOf(0.4);
+    Fraction alpha=new Fraction().valueOf(0.05);
 
-    public Network(int noOfFeatures, int noOfOuputs, int noOfHidden, int noOfNeuronsPerLayer, Fraction epsilon, int noEpoch) {
-        noOfInputs = noOfFeatures;
-        noOfOutput = noOfOuputs;
-        noOfHiddenLayers = noOfHidden;
+    public Network(int noOfFeatures, int noOfOuputs, int noOfHidden, int noOfNeuronsPerLayer, Double epsilon,
+                   int noEpoch, double learningRate, boolean adaptiveLR, int limitSEE, double alpha) {
+        this.learningRate = new Fraction().valueOf(learningRate);
+        this.adaptiveLR = adaptiveLR;
+        this.limitSEE = limitSEE;
+        this.noOfInputs = noOfFeatures;
+        this.noOfOutput = noOfOuputs;
+        this.noOfHiddenLayers = noOfHidden;
         this.epsilon = epsilon;
         this.noEpoch = noEpoch;
+        this.alpha = new Fraction().valueOf(alpha);
         int noOfNeuronLayer = noOfNeuronsPerLayer;
         layers = new Layer[noOfNeuronLayer + 2];
         layers[0] = new Layer(noOfInputs, 0);
@@ -52,18 +60,19 @@ public class Network {
         boolean stopCondition = false;
         int epoch = 0;
         Fraction[] globalError = new Fraction[input.length];
+        Double previousSEE = 1000.0;
         while ((!stopCondition) && (epoch < this.noEpoch)){
             System.out.print("EPOCH: "+epoch);
             for (int inputNo = 0; inputNo < input.length; inputNo++){
                 activate(input[inputNo]);
                 Fraction[] err = new Fraction[output.length];
                 globalError[inputNo] = errorComputationRegression(output[inputNo], err);
-                //System.out.println(inputNo+" err "+globalError[inputNo].recalibreaza().recalibreaza());
                 errorsBackpropagation(err);
             }
             Double SEE = computeSEE(globalError);
             System.out.println(" SEE: "+SEE+" Learning Rate: "+learningRate);
-            stopCondition = checkGlobarErr(SEE);
+            stopCondition = checkGlobarErr(SEE, previousSEE);
+            previousSEE = SEE;
             epoch++;
         }
     }
@@ -78,18 +87,20 @@ public class Network {
         }
         see = see.div(new Fraction().valueOf(globalError.length));
         double err = Math.sqrt(see.toDouble());
-        adjustLearningRate(err);
+        if (this.adaptiveLR) {
+            adjustLearningRate(err);
+        }
         return err;
     }
 
     private void adjustLearningRate(Double err) {
-        if(err<400) {
-            learningRate = new Fraction().valueOf(Math.log(420-err)).div(new Fraction().valueOf(Math.exp(1)*1.1));
+        if(err<this.limitSEE) {
+            learningRate = new Fraction().valueOf(Math.log((this.limitSEE+Math.pow(Math.exp(1), Math.exp(1)))-err)).div(new Fraction().valueOf(1.1*Math.exp(1)));
         }
     }
 
-    private boolean checkGlobarErr(Double SEE) {
-        if (SEE > 0.225){
+    private boolean checkGlobarErr(Double SEE, Double previousSEE) {
+        if (SEE > epsilon){
             return false;
         }
         return true;
@@ -109,11 +120,15 @@ public class Network {
                     }
                     n1.setErrorSigmoidal(sumError);
                 }
+                Fraction lastWeightUpdate = new Fraction();
                 for (int j =0; j < n1.getNoInputs(); j++){
                     Fraction netWeight = new Fraction();
                     Fraction increment = learningRate.mul(n1.getError().mul(layers[currentLayerNo-1].getNeuron(j).getOutput()));
+                    Fraction momentum = alpha.mul(lastWeightUpdate);
                     netWeight = n1.getWeight(j).add(increment);
-                    //System.out.println("WEIGHTS "+n1.getWeight(j)+" "+netWeight);
+                    netWeight = netWeight.add(momentum);
+                    //System.out.println("WEIGHTS "+n1.getWeight(j)+" "+netWeight+" "+momentum);
+                    lastWeightUpdate= increment.add(momentum);
                     n1.setWeight(j, netWeight);
                 }
                 i++;
@@ -152,5 +167,20 @@ public class Network {
 
     public Layer getLayer(int i) {
         return layers[i];
+    }
+
+    public void validate(Fraction[][] validationInput, Fraction[][] validationOutput) {
+        System.out.println("________________________VALIDATION________________________");
+        Double totalErr =0.0;
+        for (int i = 0; i< validationInput.length; i++){
+            activate(validationInput[i]);
+            Layer layer = this.getLayer(noOfHiddenLayers+1);
+            Fraction error = validationOutput[i][0].recalibreaza().sub(layer.getNeuron(0).getOutput().recalibreaza());
+            System.out.println("Validation set: "+i+" expected output: "+ validationOutput[i][0].recalibreaza()+
+                                    " - actual output: "+layer.getNeuron(0).getOutput().recalibreaza()
+                                    +" - error "+ error);
+            totalErr = totalErr+Math.abs(error.toDouble());
+        }
+        System.out.println("Average error: "+totalErr/validationInput.length);
     }
 }

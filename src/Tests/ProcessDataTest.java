@@ -12,7 +12,7 @@ import java.text.ParseException;
  */
 public class ProcessDataTest {
     public static void main(String [] args) throws IOException, ParseException {
-        ProcessData processData = new ProcessData("src/resources/data.txt");
+        ProcessData processData = new ProcessData("src/resources/dataSet2.txt");
         processData.readInputData();
         Fraction[][] input = processData.getInput();
         Fraction[][] output = processData.getOutput();
@@ -32,5 +32,6 @@ public class ProcessDataTest {
         for (int i =0; i< 10; i++){
             System.out.println("output["+i+"] = "+output[i][0].recalibreaza());
         }
+        System.out.println(processData.getBiggestData());
     }
 }

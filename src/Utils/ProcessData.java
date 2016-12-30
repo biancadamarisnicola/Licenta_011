@@ -26,6 +26,29 @@ public class ProcessData {
         this.biggestNumber = getBiggestData();
     }
 
+//    public void readInputData() throws IOException, ParseException {
+//        FileReader fr = new FileReader(inputFile);
+//        BufferedReader br = new BufferedReader(fr);
+//        noOfExample = Integer.parseInt(br.readLine());
+//        noOfFeatures = Integer.parseInt(br.readLine());
+//        noOfOuputs = Integer.parseInt(br.readLine());
+//        input = new Fraction[noOfExample][noOfFeatures];
+//        output = new Fraction[noOfExample][noOfOuputs];
+//        for (int i = 0; i < noOfExample; i++) {
+//            String props[] = br.readLine().split("\t");
+//            int j;
+//            input[i][0] = dayOfWeek(props[0]).div(new Fraction(BigInteger.TEN));
+//            input[i][1] = dayOfMonth(props[0]).div(new Fraction(BigInteger.valueOf(30)));
+//            input[i][2] = monthOfYear(props[0]).div(new Fraction(BigInteger.valueOf(12)));
+//            output[i][0] = new Fraction(BigInteger.ONE).valueOf(Double.valueOf(props[6])).calibreaza();
+//            for (j = 3; j < noOfFeatures; j++) {
+//                input[i][j] = new Fraction(BigInteger.ONE).valueOf(Double.valueOf(props[j - 2])).calibreaza();
+//            }
+//        }
+//        br.close();
+//        fr.close();
+//    }
+
     public void readInputData() throws IOException, ParseException {
         FileReader fr = new FileReader(inputFile);
         BufferedReader br = new BufferedReader(fr);
@@ -34,16 +57,19 @@ public class ProcessData {
         noOfOuputs = Integer.parseInt(br.readLine());
         input = new Fraction[noOfExample][noOfFeatures];
         output = new Fraction[noOfExample][noOfOuputs];
+        String day1[] = br.readLine().split("\t");
         for (int i = 0; i < noOfExample; i++) {
-            String props[] = br.readLine().split("\t");
+            String day2[] = br.readLine().split("\t");
             int j;
-            input[i][0] = dayOfWeek(props[0]).div(new Fraction(BigInteger.TEN));
-            input[i][1] = dayOfMonth(props[0]).div(new Fraction(BigInteger.valueOf(30)));
-            input[i][2] = monthOfYear(props[0]).div(new Fraction(BigInteger.valueOf(12)));
-            output[i][0] = new Fraction(BigInteger.ONE).valueOf(Double.valueOf(props[6])).calibreaza();
+            input[i][0] = dayOfWeek(day1[0]).div(new Fraction(BigInteger.TEN));
+            input[i][1] = dayOfMonth(day1[0]).div(new Fraction(BigInteger.valueOf(30)));
+            input[i][2] = monthOfYear(day1[0]).div(new Fraction(BigInteger.valueOf(12)));
+            //output should be the next day open price
+            output[i][0] = new Fraction(BigInteger.ONE).valueOf(Double.valueOf(day2[1])).calibreaza();
             for (j = 3; j < noOfFeatures; j++) {
-                input[i][j] = new Fraction(BigInteger.ONE).valueOf(Double.valueOf(props[j - 2])).calibreaza();
+                input[i][j] = new Fraction(BigInteger.ONE).valueOf(Double.valueOf(day1[j - 2])).calibreaza();
             }
+            day1 = day2;
         }
         br.close();
         fr.close();
