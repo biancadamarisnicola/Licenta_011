@@ -1,5 +1,7 @@
-import ANN.Controller;
-import ANN.Layer;
+package regression;
+
+import regression.ann.Controller;
+import common.Layer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +13,7 @@ import java.util.Map;
 /**
  * Created by bianca on 19.08.2016.
  */
-public class Main {
+public class MainRegression {
     private JFrame frame;
     private Controller ctrl;
     private JTextField textField;
@@ -36,7 +38,7 @@ public class Main {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    Main window = new Main();
+                    MainRegression window = new MainRegression();
                     window.frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -45,7 +47,7 @@ public class Main {
         });
     }
 
-    public Main() throws Exception {
+    public MainRegression() throws Exception {
         this.noHidden = 2;
         this.noNeurPerHidden = 3;
         this.alpha = 0.05;

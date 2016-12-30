@@ -1,4 +1,4 @@
-package ANN;
+package common;
 
 /**
  * Created by bianca on 29.12.2016.

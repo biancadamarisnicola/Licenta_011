@@ -1,6 +1,6 @@
 package Tests;
 
-import Utils.Fraction;
+import common.Fraction;
 
 import java.math.BigInteger;
 

@@ -1,6 +1,4 @@
-package ANN;
-
-import Utils.Fraction;
+package common;
 
 import java.util.Arrays;
 import java.util.Random;

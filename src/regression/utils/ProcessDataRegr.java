@@ -1,4 +1,6 @@
-package Utils;
+package regression.utils;
+
+import common.Fraction;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,9 +11,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
- * Created by bianca on 29.12.2016.
+ * Created by bianca on 30.12.2016.
  */
-public class ProcessData {
+public class ProcessDataRegr {
     String inputFile;
     private int noOfExample;
     private int noOfFeatures;
@@ -21,7 +23,7 @@ public class ProcessData {
     private Double biggestNumber;
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-    public ProcessData(String inputFile) throws IOException, ParseException {
+    public ProcessDataRegr(String inputFile) throws IOException, ParseException {
         this.inputFile = inputFile;
         this.biggestNumber = getBiggestData();
     }

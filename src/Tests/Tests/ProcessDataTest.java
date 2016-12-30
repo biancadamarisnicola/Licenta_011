@@ -1,7 +1,7 @@
 package Tests;
 
-import Utils.Fraction;
-import Utils.ProcessData;
+import common.Fraction;
+import regression.utils.ProcessDataRegr;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -12,7 +12,7 @@ import java.text.ParseException;
  */
 public class ProcessDataTest {
     public static void main(String [] args) throws IOException, ParseException {
-        ProcessData processData = new ProcessData("src/resources/XTSE-MEQ_UADJ.txt");
+        ProcessDataRegr processData = new ProcessDataRegr("src/resources/XTSE-MEQ_UADJ.txt");
         processData.readInputData();
         Fraction[][] input = processData.getInput();
         Fraction[][] output = processData.getOutput();

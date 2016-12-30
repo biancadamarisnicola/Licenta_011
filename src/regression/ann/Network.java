@@ -1,6 +1,8 @@
-package ANN;
+package regression.ann;
 
-import Utils.Fraction;
+import common.Fraction;
+import common.Layer;
+import common.Neuron;
 
 /**
  * Created by bianca on 29.12.2016.
