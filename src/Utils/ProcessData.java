@@ -26,29 +26,6 @@ public class ProcessData {
         this.biggestNumber = getBiggestData();
     }
 
-//    public void readInputData() throws IOException, ParseException {
-//        FileReader fr = new FileReader(inputFile);
-//        BufferedReader br = new BufferedReader(fr);
-//        noOfExample = Integer.parseInt(br.readLine());
-//        noOfFeatures = Integer.parseInt(br.readLine());
-//        noOfOuputs = Integer.parseInt(br.readLine());
-//        input = new Fraction[noOfExample][noOfFeatures];
-//        output = new Fraction[noOfExample][noOfOuputs];
-//        for (int i = 0; i < noOfExample; i++) {
-//            String props[] = br.readLine().split("\t");
-//            int j;
-//            input[i][0] = dayOfWeek(props[0]).div(new Fraction(BigInteger.TEN));
-//            input[i][1] = dayOfMonth(props[0]).div(new Fraction(BigInteger.valueOf(30)));
-//            input[i][2] = monthOfYear(props[0]).div(new Fraction(BigInteger.valueOf(12)));
-//            output[i][0] = new Fraction(BigInteger.ONE).valueOf(Double.valueOf(props[6])).calibreaza();
-//            for (j = 3; j < noOfFeatures; j++) {
-//                input[i][j] = new Fraction(BigInteger.ONE).valueOf(Double.valueOf(props[j - 2])).calibreaza();
-//            }
-//        }
-//        br.close();
-//        fr.close();
-//    }
-
     public void readInputData() throws IOException, ParseException {
         FileReader fr = new FileReader(inputFile);
         BufferedReader br = new BufferedReader(fr);
@@ -130,11 +107,19 @@ public class ProcessData {
         for (int i = 0; i < noOfExample; i++) {
             String props[] = br.readLine().split("\t");
             for (int j = 1; j < noOfFeatures; j++) {
-                if (j != 5 && j < 7) {
+                if (j != 5 && j < noOfFeatures-2) {
                     max = (max < Double.valueOf(props[j])) ? Double.valueOf(props[j]) : max;
                 }
             }
         }
         return max;
+    }
+
+    public Double getAverageOutput() throws IOException, ParseException {
+        Double average = 0.0;
+        for (int i = 0; i < noOfExample; i++) {
+            average += output[i][0].recalibreaza().toDouble();
+        }
+        return average/noOfExample;
     }
 }

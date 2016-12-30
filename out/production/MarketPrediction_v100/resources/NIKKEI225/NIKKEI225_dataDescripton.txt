@@ -1,0 +1,2 @@
+Currency in JPY
+Date	Open	High	Low	Close	Volume  Adj Close*

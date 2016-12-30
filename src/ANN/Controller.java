@@ -11,6 +11,7 @@ import java.text.ParseException;
  */
 public class Controller {
     private final Double normalizationRate;
+    private final String stock;
     private Fraction input[][], output[][];
     private Fraction inputTest[][], outputTest[][];
     private int noOfExample, noOfExampleTest;
@@ -20,20 +21,25 @@ public class Controller {
     private Double epsilon;
     private ProcessData processData;
     private Double learningRate;
-    private Integer limitSEE;
+    private Double limitSEE;
     private boolean adaptiveLR;
     private Double alpha;
+    private int noOfHidden;
+    private int noOfNeuronsPerLayer;
 
-    public Controller(int noEpoch, Double epsilon, Double learningRate, Integer limitSEE, boolean adaptiveLR, Double alpha) throws IOException, ParseException {
+    public Controller(String stock, int noEpoch, Double epsilon, Double learningRate, Double limitSEE, boolean adaptiveLR, Double alpha, int noHidden, int noNeurPerHidden) throws IOException, ParseException {
         this.noEpoch = noEpoch;
         this.epsilon = epsilon;
         this.learningRate = learningRate;
         this.limitSEE = limitSEE;
         this.adaptiveLR = adaptiveLR;
         this.alpha =alpha;
+        this.stock = stock;
+        this.noOfNeuronsPerLayer = noNeurPerHidden;
+        this.noOfHidden = noHidden;
 
         //read data
-        processData = new ProcessData("src/resources/data.txt");
+        processData = new ProcessData("src/resources/"+stock+"/"+stock+".txt");
         processData.readInputData();
         this.input = processData.getInput();
         this.output = processData.getOutput();
@@ -41,9 +47,11 @@ public class Controller {
         this.noOfFeatures = processData.getNoOfFeatures();
         this.noOfOuputs = processData.getNoOfOuputs();
         this.normalizationRate = processData.getBiggestNumber();
+        this.limitSEE = Math.sqrt(processData.getAverageOutput()*10)+30;
+        System.out.println("LimitSEE "+this.limitSEE);
 
         //read data for test
-        processData = new ProcessData("src/resources/dataTest.txt");
+        processData = new ProcessData("src/resources/"+stock+"/"+stock+"Test.txt");
         processData.readInputData();
         this.inputTest = processData.getInput();
         this.outputTest = processData.getOutput();
@@ -53,20 +61,18 @@ public class Controller {
     }
 
     public Layer getOutput() throws IOException, ParseException {
-        int noOfHidden = 2;
-        int noOfNeuronsPerLayer = 3;
         Network network = new Network(noOfFeatures, noOfOuputs, noOfHidden, noOfNeuronsPerLayer,
                 epsilon, noEpoch, learningRate, adaptiveLR, limitSEE, alpha);
         network.learn(input, output);
 //        network.test(inputTest, outputTest);
         //pt datele introduse de user
         Fraction userInput[];
-        processData = new ProcessData("src/resources/validation.txt");
+        processData = new ProcessData("src/resources/"+stock+"/"+stock+"Validation.txt");
         processData.readInputData();
         Fraction[][] validationInput = processData.getInput();
         Fraction[][] validationOutput = processData.getOutput();
         network.validate(validationInput, validationOutput);
-        processData = new ProcessData("src/resources/userData.txt");
+        processData = new ProcessData("src/resources/"+stock+"/"+stock+"UserData.txt");
         processData.readInputData();
         userInput = processData.getInput()[0];
         network.activate(userInput);

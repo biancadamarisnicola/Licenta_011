@@ -6,7 +6,7 @@ import Utils.Fraction;
  * Created by bianca on 29.12.2016.
  */
 public class Network {
-    private final int limitSEE;
+    private final Double limitSEE;
     private final boolean adaptiveLR;
     private int noOfInputs;
     private int noOfOutput;
@@ -18,7 +18,7 @@ public class Network {
     Fraction alpha=new Fraction().valueOf(0.05);
 
     public Network(int noOfFeatures, int noOfOuputs, int noOfHidden, int noOfNeuronsPerLayer, Double epsilon,
-                   int noEpoch, double learningRate, boolean adaptiveLR, int limitSEE, double alpha) {
+                   int noEpoch, double learningRate, boolean adaptiveLR, Double limitSEE, double alpha) {
         this.learningRate = new Fraction().valueOf(learningRate);
         this.adaptiveLR = adaptiveLR;
         this.limitSEE = limitSEE;
@@ -95,7 +95,7 @@ public class Network {
 
     private void adjustLearningRate(Double err) {
         if(err<this.limitSEE) {
-            learningRate = new Fraction().valueOf(Math.log((this.limitSEE+Math.pow(Math.exp(1), Math.exp(1)))-err)).div(new Fraction().valueOf(1.1*Math.exp(1)));
+            learningRate = new Fraction().valueOf(Math.log((this.limitSEE+20)-err)).div(new Fraction().valueOf(1.1*Math.exp(1)));
         }
     }
 
